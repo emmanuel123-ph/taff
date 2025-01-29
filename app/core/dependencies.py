@@ -8,16 +8,10 @@ from fastapi import Request, HTTPException, BackgroundTasks
 from app import schemas, models, crud
 from app.core.i18n import __
 from app.core.security import decode_access_token
-from app.models.db.session import SessionLocal
 
-# def get_db(request: Request) -> Generator:
-#     return request.state.db
-def get_db():
-    db = SessionLocal()  # Crée une session de base de données
-    try:
-        yield db  # Utilise la session et permet sa gestion automatique
-    finally:
-        db.close()  # Ferme la session après utilisation
+
+def get_db(request: Request) -> Generator:
+    return request.state.db
 
 
 # class TokenRequired(HTTPBearer):
