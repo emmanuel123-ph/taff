@@ -41,7 +41,7 @@ target_metadata = Base.metadata
 
 
 def get_url():
-    return get_secret("SQLALCHEMY_DATABASE_URL",'mysql+pymysql://root:@localhost:3306/testdb')
+    return get_secret("SQLALCHEMY_DATABASE_URL", 'mysql+pymysql://root:@localhost:3306/testdb')
 
 
 def run_migrations_offline():

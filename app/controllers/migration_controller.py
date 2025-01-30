@@ -13,6 +13,7 @@ from app.models.db.base_class import Base
 from app.utils import logger
 import subprocess
 import logging
+import traceback
 
 router = APIRouter(prefix="/migrations", tags=["migrations"])
 
