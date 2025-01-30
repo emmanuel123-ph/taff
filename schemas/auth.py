@@ -25,3 +25,5 @@ class AuthResponse (BaseModel):
     phone_number:str
     created_at:datetime
     updated_at:datetime
+
+    
