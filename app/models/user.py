@@ -15,6 +15,6 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow) # Date de création
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     # added_by = Column(String ,ForeignKey("auth.uuid"),nullable=True )
-    # auth =relationship("Auth",foreign_keys=[added_by])
+# auth =relationship("Auth",foreign_keys=[added_by])
 
     # Dernière mise à jour
