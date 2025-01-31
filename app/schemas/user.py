@@ -29,7 +29,7 @@ class UserResponse(BaseModel):
     uuid:str
     username:str
     email:EmailStr
-    phone_nunber:str
+    phone_number:str
     is_active:bool
     created_at:datetime
     updated_at:datetime
