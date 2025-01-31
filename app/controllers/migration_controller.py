@@ -25,7 +25,7 @@ def check_user_access_key(admin_key: schemas.AdminKey):
 
 
 @router.post("/create-database-tables", response_model=schemas.Msg, status_code=201)
-async def create_database_tables(
+def create_database_tables(
     db: Session = Depends(dependencies.get_db),
     admin_key: schemas.AdminKey = Body(...)
 ) -> dict[str, str]:
@@ -58,29 +58,28 @@ async def create_database_tables(
     except OSError:
         logger.error("Creation of the directory %s failed" % migrations_folder)
     else:
-        logger.error("Successfully created the directory %s " % migrations_folder)
+        logger.info("Successfully created the directory %s " % migrations_folder)
 
     try:
         # Get the environment system
         if platform.system() == 'Windows':
-
-            os.system('set PYTHONPATH=. && .\\venv\Scripts\python.exe -m alembic revision --autogenerate')
-
+            # Windows-specific command
+            os.system('.\\venv\\Scripts\\python.exe .\\venv\\Scripts\\alembic.exe revision --autogenerate')
         else:
+            # Unix-like system command
             os.system('PYTHONPATH=. alembic revision --autogenerate')
 
         # Get the environment system
         if platform.system() == 'Windows':
-
-            os.system('set PYTHONPATH=. && .\\venv\Scripts\python.exe -m alembic upgrade head')
-
+            # Windows-specific command
+            os.system('.\\venv\\Scripts\\python.exe .\\venv\\Scripts\\alembic.exe upgrade head')
         else:
+            # Unix-like system command
             os.system('PYTHONPATH=. alembic upgrade head')
 
         """ Try to remove previous alembic versions folder """
         try:
             shutil.rmtree(migrations_folder)
-            pass
         except Exception as e:
             pass
 
@@ -88,4 +87,3 @@ async def create_database_tables(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    

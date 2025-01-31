@@ -1,7 +1,7 @@
 import re
 import string
 import random
-import jwt
+# import jwt
 import bcrypt
 from datetime import timedelta, datetime
 from random import randint, choice
