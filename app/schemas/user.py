@@ -1,12 +1,12 @@
-from pydantic import BaseModel,EmailStr
+from pydantic import BaseModel, ConfigDict,EmailStr
 from datetime import datetime
 from typing import Optional
 
 class UserBase(BaseModel):
-    username:str
-    email:EmailStr
-    phone_number:str
-    hashed_password:str
+    username: str
+    email: EmailStr
+    phone_number: str  # Assure-toi que le champ est bien présent
+    hashed_password: str
 
 class UserCreate(UserBase):
     pass
@@ -33,3 +33,4 @@ class UserResponse(BaseModel):
     is_active:bool
     created_at:datetime
     updated_at:datetime
+    model_config = ConfigDict(from_attributes=True)

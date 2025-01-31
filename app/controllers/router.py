@@ -7,4 +7,5 @@ api_router = APIRouter()
 
 api_router.include_router(migration)
 api_router.include_router(user)
+api_router.include_router(user)
 

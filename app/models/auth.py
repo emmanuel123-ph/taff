@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from enum import Enum
-Base = declarative_base() # Base de tous les modèles
+from app.models.db.base_class import Base
 
 
 class AuthStatus(str,Enum):
@@ -13,10 +13,10 @@ class AuthStatus(str,Enum):
 
 class Auth(Base):
      __tablename__ = "auth" # Nom de la table dans la base de données
-     uuid= Column(String,primary_key=True)
-     first_name= Column(String,nullable=False )
-     last_name =Column(String,nullable=False)
-     email= Column(String,unique=True,nullable=False)
+     uuid= Column(String(36),primary_key=True)
+     first_name= Column(String(255),nullable=False )
+     last_name =Column(String(255),nullable=False)
+     email= Column(String(255),unique=True,nullable=False)
      phone_number=Column(String,unique=True, nullable=False)
      status = Column(String,default=AuthStatus.ACTIVATED)
      is_deleted = Column(Boolean, default=False)

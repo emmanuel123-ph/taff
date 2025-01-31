@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.models import User
 from app.schemas import UserCreate,UserDelete,UserUpdate,UserResponse
 from fastapi import HTTPException,status
-
+from app.core.security import get_password_hash
 
 # Fonction pour récupérer un utilisateur par email
 def get_user_by_email(db: Session, email: str):
@@ -33,6 +33,9 @@ def create_user(db: Session, obj_in: UserCreate):
     exist_phone_number = get_user_by_phone_number(db, phone_number=obj_in.phone_number)
     if exist_phone_number is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="This phone number already exists")
+    
+    # Hasher le mot de passe
+    hashed_password = get_password_hash(obj_in.hashed_password)
 
     # Créer un nouvel utilisateur
     new_user = User(
@@ -40,13 +43,26 @@ def create_user(db: Session, obj_in: UserCreate):
         username=obj_in.username,
         email=obj_in.email,
         phone_number=obj_in.phone_number,
-        hashed_password=obj_in.hashed_password,
+        hashed_password=hashed_password,
     )
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)  # Rafraîchir pour obtenir l'objet mis à jour
     return new_user
+
+
+def update_user(db:Session,obj_in:UserUpdate):
+    user = get_user_by_uuid(db, uuid=obj_in.uuid)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    user.username = obj_in.username if obj_in.username else user.username
+    user.email = obj_in.email if obj_in.email else user.email
+    user.phone_number = obj_in.phone_number if obj_in.phone_number else user.phone_number
+    db.commit()
+    db.refresh(user)
+    return user
 
 # Fonction pour supprimer un utilisateur (soft delete)
 def delete_user(db: Session, uuid: str):
@@ -56,8 +72,7 @@ def delete_user(db: Session, uuid: str):
 
     user.is_deleted = True  # Marquer comme supprimé au lieu de supprimer physiquement
     db.commit()
-    return {"message": "User deleted successfully"}
-
+    
 # Activer un utilisateur
 def activate_user(db: Session, uuid: str):
     user = get_user_by_uuid(db, uuid=uuid)
@@ -84,7 +99,7 @@ def delete_user_by_list(db: Session, uuids: List[str]):
     for user in users:
         user.is_deleted = True
     db.commit()
-    return {"message": f"{len(users)} users deleted successfully"}
+    return len(users)
 
 # Activer une liste d'utilisateurs
 def activate_user_by_list(db: Session, uuids: List[str]):
@@ -94,7 +109,7 @@ def activate_user_by_list(db: Session, uuids: List[str]):
     for user in users:
         user.is_active = True
     db.commit()
-    return {"message": f"{len(users)} users activated successfully"}
+    return len(users)
 
 # Désactiver une liste d'utilisateurs
 def deactivate_user_by_list(db: Session, uuids: List[str]):
@@ -104,4 +119,4 @@ def deactivate_user_by_list(db: Session, uuids: List[str]):
     for user in users:
         user.is_active = False
     db.commit()
-    return {"message": f"{len(users)} users deactivated successfully"}
+    return len(users)
