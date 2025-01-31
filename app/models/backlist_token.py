@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, DateTime, String, event
 
-from app.main.models.db.base_class import Base
+from app.models.db.base_class import Base
 
 
 @dataclass

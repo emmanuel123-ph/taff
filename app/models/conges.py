@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from enum import Enum
 from sqlalchemy.orm import relationship
-Base = declarative_base() # Base de tous les modèles
+from app.models.db.base_class import Base
 
 class StatutsConges(str,Enum):
     PENDING = "PENDING"
