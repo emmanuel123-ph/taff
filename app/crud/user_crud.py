@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.models import User
 from app.schemas import UserCreate,UserDelete,UserUpdate,UserResponse
 from fastapi import HTTPException,status
-from app.core.security import get_password_hash
+from app.core.security import get_password_hash,verify_password
 
 # Fonction pour récupérer un utilisateur par email
 def get_user_by_email(db: Session, email: str):
@@ -120,3 +120,11 @@ def deactivate_user_by_list(db: Session, uuids: List[str]):
         user.is_active = False
     db.commit()
     return len(users)
+
+def authenticate(db:Session,email:str,password:str):
+    db_obj = db.query(User).filter(User.email==email,User.is_deleted==False).first()
+    if not db_obj:
+        return None
+    if not verify_password(password,db_obj.hashed_password):
+        return None
+    return db_obj

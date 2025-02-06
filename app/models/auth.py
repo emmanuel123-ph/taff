@@ -17,8 +17,8 @@ class Auth(Base):
      first_name= Column(String(255),nullable=False )
      last_name =Column(String(255),nullable=False)
      email= Column(String(255),unique=True,nullable=False)
-     phone_number=Column(String,unique=True, nullable=False)
-     status = Column(String,default=AuthStatus.ACTIVATED)
+     phone_number=Column(String(255),unique=True, nullable=False)
+     status = Column(String(255),default=AuthStatus.ACTIVATED)
      is_deleted = Column(Boolean, default=False)
      created_at = Column(DateTime, default=datetime.utcnow) # Date de création
      updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
