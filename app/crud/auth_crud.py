@@ -1,6 +1,7 @@
 import uuid
 from sqlalchemy.orm import Session
 from app import models
+from app.core.security import get_password_hash, verify_password
 from app.models import Auth
 from app.schemas import AuthCreate, AuthUpdate, AuthDelete, AuthResponse
 from fastapi import HTTPException  , status
@@ -17,6 +18,7 @@ def get_auth_by_phone_number(db: Session, phone_number: str):
 
 
 def create_auth(db:Session,obj_in:AuthCreate):
+    hashed_password = get_password_hash(obj_in.hashed_password)
 
     exit_email=get_auth_by_email(db=db,email=obj_in.email)
     if exit_email is not None:
@@ -30,6 +32,7 @@ def create_auth(db:Session,obj_in:AuthCreate):
         last_name=obj_in.last_name,
         email=obj_in.email,
         phone_number=obj_in.phone_number,
+        hashed_password=hashed_password,
     )
 
     db.add(new_auth)
@@ -67,3 +70,10 @@ def blocked_auth(db:Session,uuid:str):
     auth.status=models.AuthStatus.BLOCKED
     db.commit()
 
+def authenticate(db:Session,email:str,password:str):
+    db_obj = db.query(Auth).filter(Auth.email==email,Auth.is_deleted==False).first()
+    if not db_obj:
+        return None
+    if not verify_password(password,db_obj.hashed_password):
+        return None
+    return db_obj

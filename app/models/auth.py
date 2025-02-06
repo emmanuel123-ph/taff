@@ -22,4 +22,5 @@ class Auth(Base):
      is_deleted = Column(Boolean, default=False)
      created_at = Column(DateTime, default=datetime.utcnow) # Date de création
      updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+     hashed_password = Column(String(255), nullable=False) # Mot de passe haché
      

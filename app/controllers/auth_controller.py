@@ -60,3 +60,30 @@ async def block(
 ):
     crud.blocked_auth(db=db,uuid=uuid)
     return {"message": __("Auth blocked")}
+
+
+
+from datetime import timedelta
+
+@router.post("/login", response_model=schemas.AuthAuthentification)
+def login(
+    obj_in: schemas.AuthLogin,
+    db: Session = Depends(get_db),
+):
+    auth = crud.authenticate(db=db, email=obj_in.email, password=obj_in.password)
+    if not auth:
+        raise HTTPException(status_code=400, detail="Email ou mot de passe incorrect")
+    if auth.status in [models.AuthStatus.DELETED,models.AuthStatus.BLOCKED]:
+        raise HTTPException(status_code=400,detail="Votre compte a été supprimé ou bien a été bloqué")
+    if auth.status !=models.AuthStatus.ACTIVATED:
+        raise HTTPException(status_code=400 , detail="Votre compte est inactif")
+    access_token_expires = timedelta(minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES)
+    return schemas.AuthAuthentification(
+        auth=auth,
+        token=schemas.Token(
+            access_token=create_access_token(
+                data={"sub": auth.uuid}, expires_delta=access_token_expires
+            ),
+            token_type="bearer"
+        )
+    )
