@@ -34,3 +34,18 @@ class UserResponse(BaseModel):
     created_at:datetime
     updated_at:datetime
     model_config = ConfigDict(from_attributes=True)
+
+class Token(BaseModel):
+    access_token: str  # Assurez-vous que ce soit une chaîne de caractères non optionnelle
+    token_type: str    # Assurez-vous que ce soit une chaîne de caractères non optionnelle
+    model_config = ConfigDict(from_attributes=True)
+
+class UserAuthentification(BaseModel):
+    user: UserResponse
+    token: Token  # Assurez-vous que ce soit de type `Token`
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserLogin(BaseModel):
+    email:str
+    password:str

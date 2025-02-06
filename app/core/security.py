@@ -34,16 +34,15 @@ def generate_code(length=6, end=True):
     return final_string
 
 
-def create_access_token(
-        subject: Union[str, Any], expires_delta: timedelta = None
-) -> str:
+def create_access_token(data: Any, expires_delta: timedelta = None):
+    to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(
-            minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-    to_encode = {"exp": expire, "sub": str(subject)}
+        expire = datetime.utcnow() + timedelta(minutes=15)  # Default expiry if not provided
+    to_encode.update({"exp": expire})
+
+    # Encode the token with the correct SECRET_KEY and algorithm
     encoded_jwt = jwt.encode(to_encode, Config.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
