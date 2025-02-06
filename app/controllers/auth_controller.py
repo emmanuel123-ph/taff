@@ -1,5 +1,3 @@
-
-
 from datetime import timedelta, datetime
 from typing import Any, List
 
@@ -13,53 +11,52 @@ from app.core.config import Config
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-@router.post("", response_model=schemas.AuthResponse)
-def create(
-    obj_in: schemas.AuthCreate,
-    db: Session = Depends(get_db),
-):
-   return crud.create_auth(db=db, obj_in=obj_in)
 
-@router.get("/{uuid}", response_model=schemas.AuthResponse)
+@router.post("",response_model=schemas.AuthResponse)
+async def create(
+    obj_in: schemas.AuthCreate,
+    db: Session = Depends(get_db)
+):
+    return crud.create_auth(db=db,obj_in=obj_in)
+
+
+@router.get('/{uuid}',response_model=schemas.AuthResponse)
 def read(
     uuid: str,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db)
 ):
-    return crud.get_auth_by_uuid(db=db, uuid=uuid)
+    return crud.get_auth_by_uuid(db=db,uuid=uuid)
 
-
-@router.delete("/delete_by_uuid/{uuid}",response_model=schemas.Msg)
-def delete(
+@router.delete("/{uuid}",response_model=schemas.Msg)
+async def delete(
     uuid: str,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db)
 ):
     crud.delete_auth(db=db,uuid=uuid)
-    return {"message" : __("Auth deleted successfully")}
+    return {"message": __("Auth deleted")}
 
-@router.put("/deactivate_by_uuid/{uuid}",response_model=schemas.Msg)
-def deactivate(
+@router.put("/deactivate/{uuid}",response_model=schemas.Msg)
+async def deactivate(
     uuid: str,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db)
 ):
     crud.deactivate_auth(db=db,uuid=uuid)
-    return {"message" : __("Auth deactived successfully")}
+    return {"message": __("Auth deactivated")}
 
-@router.put("/activated_by_uuid/{uuid}",response_model=schemas.Msg)
-def activate(
+
+@router.put("/activate/{uuid}",response_model=schemas.Msg)
+async def activate(
     uuid: str,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db)
 ):
-    crud.activated_auth(db=db,uuid=uuid)
-    return{"message" : __("Auth actived successfully")}
+    crud.activate_auth(db=db,uuid=uuid)
+    return {"message": __("Auth activated")}
 
-@router.put("/blocked_by_uuid/{uuid}",response_model=schemas.Msg)
-def blocked(
-    uuid:str,
-    db: Session = Depends(get_db),
-    
+
+@router.put("/blocked/{uuid}",response_model=schemas.Msg)
+async def block(
+    uuid: str,
+    db: Session = Depends(get_db)
 ):
     crud.blocked_auth(db=db,uuid=uuid)
-    return{"message" : __("Auth blocked successfully")}
-
-
-
+    return {"message": __("Auth blocked")}
