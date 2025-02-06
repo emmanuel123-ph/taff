@@ -2,26 +2,41 @@ from pydantic import BaseModel,EmailStr
 from datetime import datetime
 from typing import Optional
 
-
 class AuthBase(BaseModel):
-    uuid:str
+    first_name:str
+    last_name :str
     email:EmailStr
     phone_number:str
 
-class AuthCreate (AuthBase):
+class AuthCreate(AuthBase):
     pass
 
 class AuthUpdate(BaseModel):
-    uuid:Optional[str]
-    email:Optional[EmailStr]
-    phone_number:Optional[str]
-
-#pour supprimer plusieur utilisateurs au choix
-class AuthDeleteList(BaseModel):
-    uuid:list[str]
-class AuthResponse (BaseModel):
     uuid:str
-    email:EmailStr
+    first_name:Optional[str]=None
+    last_name :Optional[str]=None
+    email:Optional[EmailStr]=None
+    phone_number:Optional[str]=None
+
+class AuthDelete(BaseModel):
+    uuid:str
+
+class AuthResponse(BaseModel):
+    uuid:str
+    first_name:str
+    last_name:str
+    email:str
     phone_number:str
+    status:str
+    is_deleted:bool
     created_at:datetime
     updated_at:datetime
+
+
+
+
+
+
+    
+
+
